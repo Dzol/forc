@@ -35,7 +35,7 @@ void stack_print() {
   printf("\n");
 }
 
-// Forth Words
+// Forth Words - Stack Manipulation
 
 void duplicate() {
   if (!stack_empty()) {
@@ -44,7 +44,20 @@ void duplicate() {
     stack_push(x);
   }
   else {
-    printf("Nah! Not happenin' bro.\n");
+    printf("Nah! Not dupin' bro.\n");
+  }
+}
+
+// Forth Words - Integer Arithmetic
+
+void star() {
+  if (stack.i >= 2) {
+    int x = stack_pop();
+    int y = stack_pop();
+    stack_push(x*y);
+  }
+  else {
+    printf("Nah! Not starin' bro.\n");
   }
 }
 
@@ -58,6 +71,9 @@ int main() {
   stack_print();
 
   duplicate();
+  stack_print();
+
+  star();
   stack_print();
 
   if (!stack_empty()) {
