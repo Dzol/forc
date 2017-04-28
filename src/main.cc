@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-// Stack Stuff
-
 const int SIZE = 64;
+
+// Stack Stuff
 
 struct Stack {
   int i;
@@ -61,6 +61,13 @@ void star() {
   }
 }
 
+// Dictionary Stuff
+
+void (*DICT[SIZE])() = {
+  &duplicate,
+  &star
+};
+
 // Test
 
 int main() {
@@ -70,10 +77,10 @@ int main() {
   stack_push(3);
   stack_print();
 
-  duplicate();
+  DICT[0]();
   stack_print();
 
-  star();
+  DICT[1]();
   stack_print();
 
   if (!stack_empty()) {
