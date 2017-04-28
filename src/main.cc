@@ -35,6 +35,19 @@ void stack_print() {
   printf("\n");
 }
 
+// Forth Words
+
+void duplicate() {
+  if (!stack_empty()) {
+    int x = stack_pop();
+    stack_push(x);
+    stack_push(x);
+  }
+  else {
+    printf("Nah! Not happenin' bro.\n");
+  }
+}
+
 // Test
 
 int main() {
@@ -42,6 +55,9 @@ int main() {
   stack_print();
 
   stack_push(3);
+  stack_print();
+
+  duplicate();
   stack_print();
 
   if (!stack_empty()) {
