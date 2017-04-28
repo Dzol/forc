@@ -2,6 +2,17 @@
 
 const int SIZE = 64;
 
+enum {DO_CONST, DO_NATIVE, DONE};
+
+typedef void* Cell;
+
+typedef void (* funcptr)();
+
+struct Literal {
+  int type;
+  Cell value;
+};
+
 // Stack Stuff
 
 struct Stack {
@@ -17,9 +28,9 @@ bool stack_empty(Stack* s) {
   return s->i == 0;
 }
 
-void stack_push(Stack* s, int x) {
+void stack_push(Stack* s, Cell x) {
   if (s->i < SIZE) {
-    s->a[s->i++] = x;
+    s->a[s->i++] = *(int*)(&x);
   }
 }
 
@@ -40,8 +51,8 @@ void stack_print(Stack* s) {
 void duplicate() {
   if (!stack_empty(&p_stack)) {
     int x = stack_pop(&p_stack);
-    stack_push(&p_stack, x);
-    stack_push(&p_stack, x);
+    stack_push(&p_stack, (Cell)x);
+    stack_push(&p_stack, (Cell)x);
   }
   else {
     printf("Nah! Not dupin' bro.\n");
@@ -54,7 +65,7 @@ void star() {
   if (p_stack.i >= 2) {
     int x = stack_pop(&p_stack);
     int y = stack_pop(&p_stack);
-    stack_push(&p_stack, x*y);
+    stack_push(&p_stack, (Cell)(x*y));
   }
   else {
     printf("Nah! Not starin' bro.\n");
@@ -63,32 +74,31 @@ void star() {
 
 // Dictionary Stuff
 
-typedef void (* funcptr)();
-
-funcptr DICT[SIZE] = {
-  &duplicate,
-  &star,
+Literal DICT[SIZE] = {
+  {DO_CONST,  (Cell)3},
+  {DO_NATIVE, (Cell)&duplicate},
+  {DO_NATIVE, (Cell)&star},
+  {DONE,      NULL}
 };
 
 // Test
 
 int main() {
+
   stack_init(&p_stack);
-  stack_print(&p_stack);
+  Literal* instruction = &DICT[0];
 
-  stack_push(&p_stack, 3);
-  stack_print(&p_stack);
-
-  DICT[0](); // duplicate()
-  stack_print(&p_stack);
-
-  DICT[1](); // star()
-  stack_print(&p_stack);
-
-  if (!stack_empty(&p_stack)) {
-    printf("POP = %i\n", stack_pop(&p_stack));
+  for (int pc = 1; instruction->type != DONE; instruction = &DICT[pc++]) {
+    switch (instruction->type) {
+      case DO_CONST:
+        stack_push(&p_stack, instruction->value);
+        break;
+      case DO_NATIVE:
+        ((funcptr)(instruction->value))();
+        break;
+    }
+    stack_print(&p_stack);
   }
-  stack_print(&p_stack);
 
   return 0;
 }
