@@ -63,7 +63,9 @@ void star() {
 
 // Dictionary Stuff
 
-void (*DICT[SIZE])() = {
+typedef void (* funcptr)();
+
+funcptr DICT[SIZE] = {
   &duplicate,
   &star
 };
