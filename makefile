@@ -14,7 +14,7 @@ bin/rcforth.o: src/main.cc
 
 	$(CC) $(CFLAGS) src/main.cc -o bin/rcforth.o
 
-go:
+go: rcforth
 
 	./rcforth
 
