@@ -7,30 +7,30 @@ const int SIZE = 64;
 struct Stack {
   int i;
   int a[SIZE];
-} stack;
+} p_stack, r_stack;
 
-void stack_init() {
-  stack.i = 0;
+void stack_init(Stack* s) {
+  s->i = 0;
 }
 
-bool stack_empty() {
-  return stack.i == 0;
+bool stack_empty(Stack* s) {
+  return s->i == 0;
 }
 
-void stack_push(int x) {
-  if (stack.i < SIZE) {
-    stack.a[stack.i++] = x;
+void stack_push(Stack* s, int x) {
+  if (s->i < SIZE) {
+    s->a[s->i++] = x;
   }
 }
 
-int stack_pop() {
-  return stack.a[--stack.i];
+int stack_pop(Stack* s) {
+  return s->a[--(s->i)];
 }
 
-void stack_print() {
-  printf("<%i> ", stack.i);
-  for (int j = 0; j < stack.i; ++j){
-    printf("%i ", stack.a[j]);
+void stack_print(Stack* s) {
+  printf("<%i> ", s->i);
+  for (int j = 0; j < s->i; ++j){
+    printf("%i ", s->a[j]);
   }
   printf("\n");
 }
@@ -38,10 +38,10 @@ void stack_print() {
 // Forth Words - Stack Manipulation
 
 void duplicate() {
-  if (!stack_empty()) {
-    int x = stack_pop();
-    stack_push(x);
-    stack_push(x);
+  if (!stack_empty(&p_stack)) {
+    int x = stack_pop(&p_stack);
+    stack_push(&p_stack, x);
+    stack_push(&p_stack, x);
   }
   else {
     printf("Nah! Not dupin' bro.\n");
@@ -51,10 +51,10 @@ void duplicate() {
 // Forth Words - Integer Arithmetic
 
 void star() {
-  if (stack.i >= 2) {
-    int x = stack_pop();
-    int y = stack_pop();
-    stack_push(x*y);
+  if (p_stack.i >= 2) {
+    int x = stack_pop(&p_stack);
+    int y = stack_pop(&p_stack);
+    stack_push(&p_stack, x*y);
   }
   else {
     printf("Nah! Not starin' bro.\n");
@@ -67,28 +67,28 @@ typedef void (* funcptr)();
 
 funcptr DICT[SIZE] = {
   &duplicate,
-  &star
+  &star,
 };
 
 // Test
 
 int main() {
-  stack_init();
-  stack_print();
+  stack_init(&p_stack);
+  stack_print(&p_stack);
 
-  stack_push(3);
-  stack_print();
+  stack_push(&p_stack, 3);
+  stack_print(&p_stack);
 
-  DICT[0]();
-  stack_print();
+  DICT[0](); // duplicate()
+  stack_print(&p_stack);
 
-  DICT[1]();
-  stack_print();
+  DICT[1](); // star()
+  stack_print(&p_stack);
 
-  if (!stack_empty()) {
-    printf("POP = %i\n", stack_pop());
+  if (!stack_empty(&p_stack)) {
+    printf("POP = %i\n", stack_pop(&p_stack));
   }
-  stack_print();
+  stack_print(&p_stack);
 
   return 0;
 }
